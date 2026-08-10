@@ -1,75 +1,69 @@
-# DEVOPS-102: Nginx Static Website Deployment with Docker & AWS EC2
+# DEVOPS-102: Nginx Static Website Deployment on AWS EC2
 
-A beginner-friendly, hands-on DevOps practice project for learning how to containerize a static website with **Docker + Nginx** and deploy it on an **Ubuntu AWS EC2 instance**.
+A beginner-friendly **Junior DevOps practice project** for learning Docker, Nginx, Linux, and AWS EC2.
 
-> This repository is created for learning and practice purposes. It is not intended to represent a complete production deployment.
+> This project is for learning and hands-on practice only.
 
-## Project Scenario
+## Scenario
 
-Imagine you have joined a company as a **Junior DevOps Engineer**.
+You are working as a **Junior DevOps Engineer**.
 
-The frontend team has completed a static company website containing HTML, CSS, and images.
+The frontend team has given you a completed static company website containing HTML, CSS, and images.
 
-Your task is to:
+Your job is to:
 
+- Create a Dockerfile
 - Containerize the website using Nginx
 - Build a Docker image
 - Run the website inside a container
-- Publish it on port `80`
-- Deploy it to an Ubuntu EC2 instance
-- Make it accessible through the EC2 public IP
-
-The goal is to complete the deployment yourself rather than simply copy Docker commands.
+- Deploy it on Ubuntu EC2
+- Make it accessible through the internet
 
 ---
 
 ## Architecture
 
 ```text
-User Browser
-     |
-     | HTTP :80
-     v
-AWS EC2 Instance
-     |
-     | Port 80
-     v
+Browser
+   ↓
+EC2 Public IP : 80
+   ↓
 Docker Container
-     |
-     v
-Nginx Web Server
-     |
-     v
-Static HTML / CSS / Images
+   ↓
+Nginx
+   ↓
+HTML / CSS / Images
 ```
 
 ---
 
-## Starter Project Structure
+## Starter Files
 
 ```text
-company-website/
+DEVOPS-102-nginx-static-site/
 ├── index.html
 ├── css/
 │   └── style.css
 ├── images/
-├── Dockerfile
 └── README.md
 ```
 
-If you're using this repository as a practice challenge, try writing the `Dockerfile` yourself before looking at any completed solution.
+The Dockerfile is intentionally not provided.
+
+**Your first task is to create it yourself.**
 
 ---
 
-# Your Task
+# Your Tasks
 
-## 1. Prepare an EC2 Instance
+## 1. Prepare EC2
 
-Launch an Ubuntu EC2 instance and connect using SSH.
+- Launch or use an Ubuntu EC2 instance
+- Connect using SSH
+- Install Docker if needed
+- Verify Docker is running
 
-Make sure Docker is installed and running.
-
-Verify:
+Check:
 
 ```bash
 docker --version
@@ -77,40 +71,36 @@ docker --version
 
 ---
 
-## 2. Write the Dockerfile
+## 2. Create the Dockerfile
 
-Create a Dockerfile that:
+Your Dockerfile should:
 
-- Uses an official lightweight Nginx image
-- Copies the website files into the Nginx document root
-- Exposes HTTP port `80`
-- Uses the default Nginx container startup behavior
+- Use an official lightweight Nginx image
+- Copy the website files into the Nginx web directory
+- Expose port `80`
+- Allow the official Nginx image to handle container startup
 
 ### Hint
 
-The official Nginx image serves static files from:
+Nginx serves its default static website from:
 
 ```text
 /usr/share/nginx/html/
 ```
 
-Try writing the Dockerfile yourself before continuing.
+Try creating the Dockerfile yourself.
 
 ---
 
-## 3. Build the Docker Image
+## 3. Build the Image
 
-Build an image named:
+Create a Docker image named:
 
 ```text
 company-nginx-site
 ```
 
-You should be able to verify it with:
-
-```bash
-docker images
-```
+Verify that the image was created successfully.
 
 ---
 
@@ -122,78 +112,64 @@ Create a container named:
 company-website
 ```
 
-Requirements:
+Configure:
 
 ```text
-EC2 Host Port:     80
-Container Port:    80
+EC2 Port:       80
+Container Port: 80
 ```
 
-Run the container in detached mode.
+Run the container in the background.
 
 ---
 
-## 5. Verify the Container
+## 5. Test from EC2
 
-Check that the container is running:
+First check that the container is running.
 
-```bash
-docker ps
-```
-
-Check Nginx logs:
-
-```bash
-docker logs company-website
-```
-
-Test directly from the EC2 instance:
+Then test Nginx directly from the EC2 instance:
 
 ```bash
 curl http://localhost
 ```
 
-If HTML is returned, your container and Nginx server are working.
+If you receive your HTML, the container and Nginx are working.
 
 ---
 
-## 6. Configure AWS Security Group
+## 6. Configure AWS
 
-Allow inbound HTTP traffic on:
+Configure the EC2 Security Group to allow required HTTP traffic on:
 
 ```text
+Port: 80
 Protocol: TCP
-Port:     80
 ```
-
-For practice, configure the source according to your access requirements.
 
 Do not expose unnecessary ports.
 
 ---
 
-## 7. Open the Website
+## 7. Test from Browser
 
-Find your EC2 public IPv4 address and visit:
+Open:
 
 ```text
 http://<EC2-PUBLIC-IP>
 ```
 
-You should now see the static website being served from the Nginx Docker container.
+You should see the company website.
 
 ---
 
 # Expected Result
 
 ```text
-Browser
+Internet
    ↓
-EC2 Public IP
+EC2 :80
    ↓
-Port 80
-   ↓
-Docker Container
+Docker :80
    ↓
 Nginx
    ↓
@@ -202,161 +178,119 @@ index.html
 
 ---
 
-# Troubleshooting Challenge
+# Troubleshooting
 
-If the website doesn't work, don't immediately delete everything and start again.
+If the website doesn't work, don't immediately delete the container.
 
 Investigate the problem.
 
-### Is the container running?
-
-```bash
-docker ps -a
-```
-
-### What does Nginx say?
-
-```bash
-docker logs company-website
-```
-
-### Does it work from inside EC2?
-
-```bash
-curl http://localhost
-```
-
-### Is port 80 published?
+Useful commands:
 
 ```bash
 docker ps
+docker ps -a
+docker logs company-website
+docker images
+curl http://localhost
 ```
 
-Then check your AWS EC2 Security Group.
-
-A useful troubleshooting order is:
+Troubleshoot in this order:
 
 ```text
-Application Files
-      ↓
+Website Files
+     ↓
 Nginx
-      ↓
-Docker Container
-      ↓
-Docker Port Mapping
-      ↓
+     ↓
+Container
+     ↓
+Port Mapping
+     ↓
 EC2
-      ↓
+     ↓
 Security Group
-      ↓
-Internet
+     ↓
+Browser
 ```
 
 ---
 
-# Acceptance Criteria
+# Completion Checklist
 
-Your challenge is complete when:
-
-- [ ] Dockerfile is written
-- [ ] Official Nginx image is used
-- [ ] Docker image builds successfully
-- [ ] Image is named `company-nginx-site`
-- [ ] Container is named `company-website`
-- [ ] Container remains running
-- [ ] Host port `80` maps to container port `80`
-- [ ] `curl http://localhost` returns the website
-- [ ] EC2 Security Group permits required HTTP traffic
-- [ ] Website works through the EC2 public IP
-- [ ] No credentials, SSH keys, or secrets are committed
+- [ ] Connected to Ubuntu EC2
+- [ ] Docker installed
+- [ ] Dockerfile created independently
+- [ ] Official Nginx image used
+- [ ] Docker image built successfully
+- [ ] Container running
+- [ ] Port `80` published
+- [ ] `curl http://localhost` works
+- [ ] EC2 Security Group configured
+- [ ] Website accessible through EC2 public IP
+- [ ] Container logs checked
+- [ ] No credentials or SSH keys committed
 
 ---
 
 # Knowledge Check
 
-After completing the project, try answering these without looking at your notes:
+After completing the project, try answering:
 
 1. What is Nginx?
-2. Why doesn't this application need Python or Node.js?
-3. Where does Nginx store its default website files?
+2. Why don't we need Python or Flask for this website?
+3. Where does Nginx serve static files from?
 4. What does `EXPOSE 80` mean?
-5. Does `EXPOSE 80` automatically publish port 80?
-6. What does `-p 80:80` do?
-7. Why does AWS Security Group need to allow port 80?
+5. Does `EXPOSE 80` publish the port automatically?
+6. What does port mapping do?
+7. Why must port `80` also be allowed in the EC2 Security Group?
 8. What happens if the main Nginx process stops?
 9. What is the difference between a Docker image and container?
-10. Which commands would you use first if the website stopped working?
+10. Which command would you check first if the container stopped?
 
 ---
 
 # Skills Practiced
 
-This project helps beginners practice:
-
-- Dockerfile creation
+- Dockerfile
 - Docker images
 - Docker containers
 - Nginx basics
 - Static website hosting
-- Docker port publishing
-- Container logs
-- Basic Docker troubleshooting
-- Linux/Ubuntu server administration
+- Port mapping
+- Docker logs
+- Linux
 - AWS EC2
-- AWS Security Groups
-- HTTP port 80
+- Security Groups
+- Basic troubleshooting
 
 ---
 
-# Security Note
+# Important
+
+This is a **practice project**, not a complete production deployment.
 
 Never commit:
 
-```text
-.pem files
-SSH private keys
-AWS credentials
-Passwords
-Access tokens
-.env files containing secrets
-```
-
-Use a `.gitignore` where appropriate.
-
----
-
-# Practice Progression
-
-If you completed this project successfully, a good learning path is:
-
-```text
-DEVOPS-101
-Flask + Docker + EC2
-        ↓
-DEVOPS-102
-Nginx + Docker + EC2
-        ↓
-DEVOPS-103
-Multi-Container Application
-        ↓
-DEVOPS-104
-Docker Compose
-```
+- `.pem` files
+- SSH private keys
+- AWS credentials
+- Passwords
+- API keys
+- Access tokens
+- Secrets
 
 ---
 
 ## Project Information
 
 **Ticket:** DEVOPS-102  
-**Role:** Junior DevOps Engineer (Practice Scenario)  
-**Difficulty:** Beginner  
-**Environment:** Ubuntu AWS EC2  
+**Level:** Beginner  
+**Role:** Junior DevOps Engineer — Practice Scenario  
 **Technologies:** Docker, Nginx, Linux, AWS EC2, HTML/CSS
 
----
+### Previous Challenge
 
-## Disclaimer
+**DEVOPS-101 — Flask Docker Deployment**
 
-This project is designed for **educational and hands-on DevOps practice**.
+### Next Challenge
 
-The architecture is intentionally kept simple so beginners can understand Docker, Nginx, networking, and EC2 deployment fundamentals before moving to more production-oriented architectures.
+**DEVOPS-103 — Two-Container Application with Docker Networking**
