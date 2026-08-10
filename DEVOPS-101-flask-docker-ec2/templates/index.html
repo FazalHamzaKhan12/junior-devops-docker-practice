@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company DevOps Portal</title>
+    <meta name="description" content="Production status for the Server Info Service.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <div class="page-glow page-glow--one" aria-hidden="true"></div>
+    <div class="page-glow page-glow--two" aria-hidden="true"></div>
+    <header class="site-header">
+        <a class="brand" href="/" aria-label="Company DevOps Portal home">
+            <span class="brand-mark" aria-hidden="true">C</span>
+            <span>Company<span class="brand-muted"> / DevOps</span></span>
+        </a>
+        <span class="header-label">Production Systems</span>
+    </header>
+    <main class="main-content">
+        <section class="hero" aria-labelledby="page-title">
+            <p class="eyebrow"><span class="eyebrow-line"></span>Infrastructure overview</p>
+            <h1 id="page-title">Company DevOps<br><span>Portal</span></h1>
+            <p class="intro">A live view of application health and deployment environment.</p>
+        </section>
+        <section class="status-card" aria-label="Server Info Service status">
+            <div class="card-topline">
+                <span>Service status</span>
+                <span class="live-badge"><span class="status-dot"></span>Operational</span>
+            </div>
+            <div class="service-heading">
+                <div class="service-icon" aria-hidden="true"><span></span><span></span><span></span></div>
+                <div>
+                    <p class="service-label">Application</p>
+                    <h2>Server Info Service</h2>
+                </div>
+            </div>
+            <dl class="details-grid">
+                <div class="detail-item"><dt>Environment</dt><dd>Production</dd></div>
+                <div class="detail-item"><dt>Status</dt><dd class="status-running"><span class="status-dot"></span>Running</dd></div>
+            </dl>
+            <div class="card-footer">
+                <span>All systems are performing normally</span>
+                <span class="signal-bars" aria-label="Strong service health"><i></i><i></i><i></i><i></i></span>
+            </div>
+        </section>
+    </main>
+    <footer class="site-footer">
+        <span>Internal infrastructure</span>
+        <span>Secure monitoring portal</span>
+    </footer>
+</body>
+</html>
