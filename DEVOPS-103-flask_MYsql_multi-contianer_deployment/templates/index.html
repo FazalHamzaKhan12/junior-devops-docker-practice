@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A secure space for employees to share feedback.">
+    <title>Company Voice | Employee Feedback</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="page-glow page-glow--top" aria-hidden="true"></div>
+    <div class="page-glow page-glow--bottom" aria-hidden="true"></div>
+
+    <header class="site-header">
+        <a class="brand" href="{{ url_for('index') }}" aria-label="Company Voice home">
+            <span class="brand-mark" aria-hidden="true">V</span>
+            <span>Company<span class="brand-accent">Voice</span></span>
+        </a>
+
+        <div class="system-status {{ 'system-status--online' if db_available else 'system-status--offline' }}">
+            <span class="status-dot"></span>
+            {{ 'Database connected' if db_available else 'Database unavailable' }}
+        </div>
+    </header>
+
+    <main class="page-layout">
+        <section class="intro-panel" aria-labelledby="page-title">
+            <p class="eyebrow"><span></span>Employee experience</p>
+            <h1 id="page-title">Your voice<br><em>moves us forward.</em></h1>
+            <p class="intro-copy">Good ideas can come from anywhere. Share what is working, what could be better, and what would make your day more effective.</p>
+
+            <div class="privacy-note">
+                <span class="privacy-icon" aria-hidden="true">✓</span>
+                <div>
+                    <strong>Thoughtfully reviewed</strong>
+                    <p>Every submission helps us build a stronger workplace together.</p>
+                </div>
+            </div>
+
+            <dl class="connection-flow" aria-label="Application data flow">
+                <div><dt>01</dt><dd>Submit</dd></div>
+                <span aria-hidden="true">→</span>
+                <div><dt>02</dt><dd>Process</dd></div>
+                <span aria-hidden="true">→</span>
+                <div><dt>03</dt><dd>Store</dd></div>
+            </dl>
+        </section>
+
+        <section class="feedback-card" aria-labelledby="form-title">
+            <div class="card-header">
+                <div>
+                    <p class="card-kicker">Employee feedback</p>
+                    <h2 id="form-title">Share your perspective</h2>
+                </div>
+                <span class="message-icon" aria-hidden="true">···</span>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="alerts" aria-live="polite">
+                        {% for category, message in messages %}
+                            <p class="alert alert--{{ category }}">{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% if not db_available %}
+                <div class="alert alert--error" role="alert">
+                    The feedback database is not available yet. Check the MySQL container and Docker network, then refresh.
+                </div>
+            {% endif %}
+
+            <form method="post" action="{{ url_for('index') }}">
+                <div class="form-group">
+                    <label for="name">Your name</label>
+                    <input id="name" name="name" type="text" maxlength="100" placeholder="e.g. Alex Morgan" autocomplete="name" required {{ 'disabled' if not db_available }}>
+                </div>
+
+                <div class="form-group">
+                    <div class="label-row">
+                        <label for="feedback">Your feedback</label>
+                        <span>Up to 1,000 characters</span>
+                    </div>
+                    <textarea id="feedback" name="feedback" maxlength="1000" rows="6" placeholder="What would you like us to know?" required {{ 'disabled' if not db_available }}></textarea>
+                </div>
+
+                <button type="submit" {{ 'disabled' if not db_available }}>
+                    Submit feedback <span aria-hidden="true">→</span>
+                </button>
+            </form>
+
+            <p class="form-footer"><span aria-hidden="true">◆</span> Stored securely in the company feedback database</p>
+        </section>
+    </main>
+
+    {% if recent_feedback %}
+        <section class="recent-section" aria-labelledby="recent-title">
+            <div class="recent-heading">
+                <div>
+                    <p class="eyebrow"><span></span>Latest voices</p>
+                    <h2 id="recent-title">Recent feedback</h2>
+                </div>
+                <p>Showing the three latest submissions</p>
+            </div>
+            <div class="feedback-grid">
+                {% for item in recent_feedback %}
+                    <article class="feedback-item">
+                        <div class="feedback-meta">
+                            <span class="avatar">{{ item.employee_name[0] | upper }}</span>
+                            <div>
+                                <strong>{{ item.employee_name }}</strong>
+                                <time>{{ item.created_at.strftime('%d %b %Y') }}</time>
+                            </div>
+                        </div>
+                        <p>“{{ item.message }}”</p>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    <footer class="site-footer">
+        <span>Internal employee platform</span>
+        <span>DEVOPS-103 · Flask + MySQL</span>
+    </footer>
+</body>
+</html>
