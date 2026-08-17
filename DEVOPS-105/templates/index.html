@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Employee feedback powered by Flask, MySQL, and Docker Compose.">
+    <title>Converge | Employee Feedback</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="glow glow--purple" aria-hidden="true"></div>
+    <div class="glow glow--mint" aria-hidden="true"></div>
+
+    <header class="site-header">
+        <a class="brand" href="{{ url_for('index') }}" aria-label="Converge home">
+            <span class="brand-symbol" aria-hidden="true"><i></i><i></i></span>
+            <span>Converge<span>.</span></span>
+        </a>
+
+        <p class="project-label">DEVOPS-105 / Compose practice</p>
+
+        <span class="system-state {{ 'system-state--online' if database_connected else 'system-state--offline' }}">
+            <i></i>{{ 'Stack connected' if database_connected else 'MySQL unavailable' }}
+        </span>
+    </header>
+
+    <main>
+        <section class="hero" aria-labelledby="page-title">
+            <div class="hero-copy">
+                <p class="eyebrow"><span></span>Employee feedback</p>
+                <h1 id="page-title">Better work<br>starts with <em>you.</em></h1>
+                <p class="intro">Share the ideas, observations, and small changes that could make a meaningful difference for everyone.</p>
+
+                <div class="compose-flow" aria-label="Application services">
+                    <article>
+                        <span class="service-icon service-icon--flask">F</span>
+                        <div><strong>Flask</strong><small>Application service</small></div>
+                    </article>
+                    <span class="flow-line" aria-hidden="true"><i></i></span>
+                    <article>
+                        <span class="service-icon service-icon--mysql">M</span>
+                        <div><strong>MySQL</strong><small>Database service</small></div>
+                    </article>
+                    <span class="volume-pill">mysql-data</span>
+                </div>
+            </div>
+
+            <section class="feedback-card" aria-labelledby="form-title">
+                <div class="card-heading">
+                    <div>
+                        <p>Open channel</p>
+                        <h2 id="form-title">What should we know?</h2>
+                    </div>
+                    <span class="card-badge">Private</span>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="alerts" aria-live="polite">
+                            {% for category, message in messages %}
+                                <p class="alert alert--{{ category }}">{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                {% if not database_connected %}
+                    <div class="alert alert--error" role="alert">
+                        MySQL is not reachable. Check the Compose service, network, healthcheck, and MYSQL_HOST value.
+                    </div>
+                {% endif %}
+
+                <form method="post" action="{{ url_for('index') }}">
+                    <div class="field">
+                        <label for="name">Your name</label>
+                        <input id="name" name="name" type="text" maxlength="100" placeholder="e.g. Jordan Lee" autocomplete="name" required {{ 'disabled' if not database_connected }}>
+                    </div>
+
+                    <div class="field">
+                        <div class="field-label">
+                            <label for="feedback">Your feedback</label>
+                            <span>Maximum 1,000 characters</span>
+                        </div>
+                        <textarea id="feedback" name="feedback" maxlength="1000" rows="6" placeholder="Share your perspective..." required {{ 'disabled' if not database_connected }}></textarea>
+                    </div>
+
+                    <button type="submit" {{ 'disabled' if not database_connected }}>
+                        Submit feedback <span aria-hidden="true">→</span>
+                    </button>
+                </form>
+
+                <div class="card-footer">
+                    <span><i></i> Stored persistently</span>
+                    <span>Flask → MySQL</span>
+                </div>
+            </section>
+        </section>
+
+        {% if recent_feedback %}
+            <section class="recent" aria-labelledby="recent-title">
+                <div class="recent-heading">
+                    <div>
+                        <p class="eyebrow"><span></span>Latest contributions</p>
+                        <h2 id="recent-title">Team voices</h2>
+                    </div>
+                    <p>Data remains available through the named MySQL volume.</p>
+                </div>
+
+                <div class="feedback-grid">
+                    {% for item in recent_feedback %}
+                        <article class="feedback-item">
+                            <span class="quote" aria-hidden="true">“</span>
+                            <p>{{ item.message }}</p>
+                            <footer>
+                                <span class="avatar">{{ item.employee_name[0] | upper }}</span>
+                                <div>
+                                    <strong>{{ item.employee_name }}</strong>
+                                    <time>{{ item.created_at.strftime('%d %b %Y') }}</time>
+                                </div>
+                            </footer>
+                        </article>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    </main>
+
+    <footer class="site-footer">
+        <span>Converge employee platform</span>
+        <span>Two services. One Compose project.</span>
+    </footer>
+</body>
+</html>
