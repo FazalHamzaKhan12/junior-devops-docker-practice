@@ -1,0 +1,52 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: mysql
+
+    environment:
+      MYSQL_DATABASE: taskdb
+      MYSQL_USER: taskuser
+      MYSQL_PASSWORD: task123
+      MYSQL_ROOT_PASSWORD: root123
+
+    networks:
+      - task-net
+
+    volumes:
+      - mysql_api:/var/lib/mysql
+
+    restart: always
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  api:
+    build: .
+    container_name: task-api
+
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: taskuser
+      DB_PASSWORD: task123
+      DB_NAME: taskdb
+
+    ports:
+      - "8000:8000"
+
+    networks:
+      - task-net
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql_api:
+
+networks:
+  task-net:
