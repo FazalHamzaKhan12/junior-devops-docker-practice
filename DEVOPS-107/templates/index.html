@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Linkline turns long URLs into compact, durable links.">
+    <title>Linkline | URL Shortener</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="ambient ambient--lime" aria-hidden="true"></div>
+    <div class="ambient ambient--blue" aria-hidden="true"></div>
+
+    <header class="site-header">
+        <a class="brand" href="{{ url_for('index') }}" aria-label="Linkline home">
+            <span class="brand-mark" aria-hidden="true"><i></i><i></i></span>
+            <span>Linkline<span>.</span></span>
+        </a>
+
+        <div class="route-map" aria-label="Application architecture">
+            <span>Nginx</span><i>→</i><span>Flask</span><i>→</i><span>Redis</span>
+        </div>
+
+        <span class="system-state {{ 'system-state--online' if redis_connected else 'system-state--offline' }}">
+            <i></i>{{ 'Redis connected' if redis_connected else 'Redis unavailable' }}
+        </span>
+    </header>
+
+    <main>
+        <section class="hero" aria-labelledby="page-title">
+            <div class="hero-copy">
+                <p class="eyebrow"><span></span>Short links. Clear journeys.</p>
+                <h1 id="page-title">Make every link<br><em>easier to move.</em></h1>
+                <p class="intro">Turn long, complicated URLs into clean links that are ready to share anywhere.</p>
+
+                <dl class="service-stats">
+                    <div><dt>3</dt><dd>Compose services</dd></div>
+                    <div><dt>1</dt><dd>Public entry point</dd></div>
+                    <div><dt>∞</dt><dd>Persistent mappings</dd></div>
+                </dl>
+            </div>
+
+            <section class="shortener-card" aria-labelledby="form-title">
+                <div class="card-heading">
+                    <div>
+                        <p>URL workspace</p>
+                        <h2 id="form-title">Create a short link</h2>
+                    </div>
+                    <span class="card-icon" aria-hidden="true">↗</span>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="alerts" aria-live="polite">
+                            {% for category, message in messages %}
+                                <p class="alert alert--{{ category }}">{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                {% if not redis_connected %}
+                    <div class="alert alert--error" role="alert">
+                        Redis is not reachable. Check the service health, app-net, and REDIS_HOST value.
+                    </div>
+                {% endif %}
+
+                <form method="post" action="{{ url_for('index') }}">
+                    <label for="url">Long URL</label>
+                    <div class="url-field">
+                        <span aria-hidden="true">URL</span>
+                        <input id="url" name="url" type="url" maxlength="2048" placeholder="https://example.com/your/very/long/path" autocomplete="url" required {{ 'disabled' if not redis_connected }}>
+                    </div>
+                    <button type="submit" {{ 'disabled' if not redis_connected }}>
+                        Shorten URL <span aria-hidden="true">→</span>
+                    </button>
+                </form>
+
+                {% if generated_link %}
+                    <div class="result" aria-live="polite">
+                        <div class="result-label">
+                            <span><i></i> Ready to share</span>
+                            <small>{{ generated_link.code }}</small>
+                        </div>
+                        <a href="{{ generated_link.short_url }}" target="_blank" rel="noopener noreferrer">{{ generated_link.short_url }}</a>
+                        <p title="{{ generated_link.destination }}">{{ generated_link.destination }}</p>
+                    </div>
+                {% endif %}
+
+                <div class="card-footer">
+                    <span><i></i> Redis persistence enabled</span>
+                    <span>Private data tier</span>
+                </div>
+            </section>
+        </section>
+
+        <section class="architecture" aria-labelledby="architecture-title">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow"><span></span>Under the surface</p>
+                    <h2 id="architecture-title">One request.<br>Three focused layers.</h2>
+                </div>
+                <p>Only the Nginx service faces the internet. Flask and Redis communicate privately on the Compose network.</p>
+            </div>
+
+            <div class="tier-grid">
+                <article>
+                    <span class="tier-number">01 / Web</span>
+                    <div class="tier-symbol tier-symbol--nginx">N</div>
+                    <h3>Nginx</h3>
+                    <p>Receives public traffic and forwards it to Flask.</p>
+                    <small>Public · Port 80</small>
+                </article>
+                <span class="tier-arrow" aria-hidden="true">→</span>
+                <article>
+                    <span class="tier-number">02 / Application</span>
+                    <div class="tier-symbol tier-symbol--flask">F</div>
+                    <h3>Flask</h3>
+                    <p>Validates URLs, creates codes, and resolves redirects.</p>
+                    <small>Private · Port 5000</small>
+                </article>
+                <span class="tier-arrow" aria-hidden="true">→</span>
+                <article>
+                    <span class="tier-number">03 / Data</span>
+                    <div class="tier-symbol tier-symbol--redis">R</div>
+                    <h3>Redis</h3>
+                    <p>Stores every short-code and destination mapping.</p>
+                    <small>Private · Port 6379</small>
+                </article>
+            </div>
+        </section>
+
+        {% if recent_links %}
+            <section class="recent" aria-labelledby="recent-title">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow"><span></span>Recent links</p>
+                        <h2 id="recent-title">Ready to redirect.</h2>
+                    </div>
+                    <p>The three newest mappings currently stored in Redis.</p>
+                </div>
+
+                <div class="link-grid">
+                    {% for link in recent_links %}
+                        <article class="link-item">
+                            <div class="link-topline">
+                                <span>/{{ link.code }}</span>
+                                <small>{{ link.clicks }} click{{ '' if link.clicks == 1 else 's' }}</small>
+                            </div>
+                            <p title="{{ link.destination }}">{{ link.destination }}</p>
+                            <a href="{{ url_for('follow_short_link', code=link.code) }}" target="_blank" rel="noopener noreferrer">Open link <span>↗</span></a>
+                        </article>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    </main>
+
+    <footer class="site-footer">
+        <span>Linkline URL platform</span>
+        <span>DEVOPS-107 · Flask + Redis + Nginx</span>
+    </footer>
+</body>
+</html>
+
