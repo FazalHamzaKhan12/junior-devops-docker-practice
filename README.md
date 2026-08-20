@@ -1,166 +1,117 @@
 # Junior DevOps Docker Practice
 
-A collection of hands-on, company-style Docker assignments designed for Junior DevOps Engineers and beginners learning Docker on Linux and AWS EC2.
+Hands-on Docker projects created while learning DevOps on Linux and AWS EC2.
 
-The projects are structured as practical tasks instead of step-by-step copy-paste tutorials.
+This repository documents my practical Docker learning journey, starting from basic containerization and progressing toward multi-container applications, Docker Compose, reverse proxies, registries, and more advanced Docker concepts.
 
-> This repository is created for learning and hands-on DevOps practice.
+## Projects
 
-## Goal
+| Project | Topic | Technologies |
+|---|---|---|
+| DEVOPS-101 | Flask Docker Deployment | Flask, Docker, EC2 |
+| DEVOPS-102 | Static Website Container | Nginx, Docker, EC2 |
+| DEVOPS-103 | Two-Tier Application | Flask, MySQL, Docker Network |
+| DEVOPS-104 | Three-Tier Application | Nginx, Flask, MySQL |
+| DEVOPS-105 | Docker Compose Practice | Flask, MySQL, Docker Compose |
+| DEVOPS-106 | FastAPI Two-Tier Application | FastAPI, MySQL, Docker Compose |
+| DEVOPS-107 | URL Shortener | Nginx, Flask, Redis, Docker Compose |
+| DEVOPS-108 | Docker Registry Practice | Java, Docker Hub, Image Registry |
 
-Practice Docker and basic deployment workflows including:
+## Learning Progression
 
-- Writing Dockerfiles
-- Building Docker images
-- Running and managing containers
+```text
+Dockerfile
+    ↓
+Images & Containers
+    ↓
+Ports & Networking
+    ↓
+Volumes
+    ↓
+Multi-Container Applications
+    ↓
+Nginx Reverse Proxy
+    ↓
+Docker Compose
+    ↓
+Healthchecks & Dependencies
+    ↓
+Docker Registry / Docker Hub
+    ↓
+More Advanced Docker Topics
+```
+
+## Skills Practiced
+
+- Dockerfiles
+- Docker images and containers
 - Port publishing
 - Docker networking
 - Docker volumes
 - Environment variables
 - Container-to-container communication
-- Nginx reverse proxy
-- Multi-tier application architecture
-- Container troubleshooting
-- Linux server administration
-- AWS EC2 deployment
 - Docker Compose
-
-## Projects
-
-### DEVOPS-101 — Flask Docker Deployment
-
-Containerize a Flask application and deploy it to an Ubuntu EC2 instance.
-
-**Skills:**
-
-- Dockerfile
-- Python Docker image
-- Container management
-- Port 5000 publishing
-- EC2 Security Groups
-- Docker logs
-
----
-
-### DEVOPS-102 — Nginx Static Website
-
-Containerize a static HTML/CSS website using Nginx and deploy it on EC2.
-
-**Skills:**
-
-- Nginx
-- Dockerfile
-- Port 80
-- Static website hosting
-- EC2 deployment
-- Basic troubleshooting
-
----
-
-### DEVOPS-103 — Two-Tier Application
-
-Deploy a Flask application and MySQL database as separate Docker containers.
-
-**Architecture:**
-
-```text
-Flask
-  ↓
-MySQL
-```
-
-**Skills:**
-
-- Multiple containers
-- Custom Docker networks
-- Environment variables
-- MySQL
-- Named volumes
-- Persistent database storage
-- Container-to-container communication
-
----
-
-### DEVOPS-104 — Three-Tier Application with Nginx Reverse Proxy
-
-Deploy a three-tier Employee Feedback application using Nginx, Flask, and MySQL in separate Docker containers.
-
-**Architecture:**
-
-```text
-Internet
-   ↓
-Nginx :80
-   ↓
-Flask :5000
-   ↓
-MySQL :3306
-```
-
-Nginx acts as the public-facing reverse proxy. Flask handles the application logic, and MySQL stores employee feedback.
-
-Only Nginx is exposed publicly. Flask and MySQL communicate privately through the Docker network.
-
-**Skills:**
-
-- Three-tier architecture
+- Healthchecks
+- Service dependencies
 - Nginx reverse proxy
-- Flask application container
-- MySQL database container
-- Docker networking
-- Container DNS / hostname communication
-- Environment variables
-- MySQL persistent volume
-- Public vs private container ports
-- AWS EC2 Security Groups
-- HTTP 500 vs 502 troubleshooting
-- Multi-container debugging
+- Flask and FastAPI deployments
+- MySQL and Redis containers
+- Docker image tagging
+- Docker Hub push/pull workflow
+- AWS EC2 deployment
+- Container troubleshooting
 
----
+## Docker Registry Practice
 
-## How to Use This Repository
-
-1. Open a project folder.
-2. Read the project ticket.
-3. Try completing the assignment yourself.
-4. Build and deploy it on Linux or AWS EC2.
-5. Use Docker logs and inspection commands when something fails.
-6. Complete the knowledge-check questions.
-7. Move to the next project.
-
-## Learning Progression
+DEVOPS-108 introduced the Docker Registry workflow:
 
 ```text
-DEVOPS-101
-Flask + Docker
-      ↓
-DEVOPS-102
-Nginx + Docker
-      ↓
-DEVOPS-103
-Flask + MySQL
-Two-Tier Application
-      ↓
-DEVOPS-104
-Nginx + Flask + MySQL
-Three-Tier Application
-      ↓
-DEVOPS-105
-Docker Compose
+Source Code
+    ↓
+Docker Build
+    ↓
+Local Image
+    ↓
+Docker Tag
+    ↓
+Docker Push
+    ↓
+Docker Hub
+    ↓
+Docker Pull
+    ↓
+Run Container
 ```
+
+Docker Hub image:
+
+`fazalhamzakhan/simple_java_docker:v1`
+
+## How I Use This Repository
+
+Each project has its own folder with the files and documentation needed for that exercise.
+
+The goal is to solve the projects through hands-on practice rather than only following copy-paste tutorials.
 
 ## Important
 
-These projects are created for **educational and hands-on DevOps practice**.
-
-They intentionally simplify some production concepts so beginners can understand Docker fundamentals before moving to Docker Compose, Kubernetes, CI/CD, monitoring, and production deployment practices.
+This repository is for learning and practice. Some configurations are intentionally simplified and should not be considered production-ready.
 
 Never commit:
 
-- AWS credentials
+- Credentials
+- API/access tokens
 - SSH private keys
 - `.pem` files
-- Passwords
-- API tokens
-- Production secrets
+- Production passwords
 - `.env` files containing secrets
+
+## Next
+
+More projects will be added as I continue learning:
+
+- Multi-stage Docker builds
+- Docker image optimization
+- Docker security basics
+- CI/CD
+- Kubernetes
